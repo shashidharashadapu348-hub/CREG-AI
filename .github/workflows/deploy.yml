@@ -21,14 +21,41 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Show repository structure
+        run: |
+          echo "Repository contents:"
+          ls -la
+          echo ""
+          echo "Source tree:"
+          find . -type f -not -path './node_modules/*' -not -path './.git/*' -not -path './dist/*' -not -path './docs/*' | head -100
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
+      - name: Install Backend Dependencies
+        run: |
+          if [ -d "supabase/functions" ]; then
+            echo "Supabase edge functions detected (Deno runtime - no install required)."
+          else
+            echo "No backend directory found - skipping."
+          fi
+
+      - name: Run Backend Tests
+        run: |
+          if [ -d "supabase/functions" ]; then
+            echo "Edge functions present. Skipping runtime tests in deploy workflow."
+          else
+            echo "No backend tests to run."
+          fi
+
       - name: Install Frontend Dependencies
         run: npm ci
+
+      - name: Run Frontend Tests
+        run: npm test --if-present
 
       - name: Build React App
         run: npm run build

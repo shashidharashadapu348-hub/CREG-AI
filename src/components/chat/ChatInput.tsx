@@ -20,7 +20,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const handleSubmit = async () => {
     if (!input.trim() && files.length === 0) return;
 
-    let attachmentUrls: string[] = [];
+    const attachmentUrls: string[] = [];
     if (files.length > 0 && user) {
       setUploading(true);
       for (const file of files) {

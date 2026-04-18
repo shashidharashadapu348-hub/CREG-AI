@@ -70,12 +70,27 @@ jobs:
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
 
+      - name: Show Build Output Summary
+        run: |
+          echo "Build output (dist):"
+          ls -lah dist
+          echo ""
+          echo "Top-level dist files:"
+          find dist -maxdepth 2 -type f | head -50
+
       - name: Publish build to docs folder on main
         run: |
           rm -rf docs
           mkdir -p docs
           cp -R dist/* docs/
           touch docs/.nojekyll
+
+      - name: Validate docs publish directory
+        run: |
+          echo "Published output (docs):"
+          ls -lah docs
+          test -f docs/index.html
+          test -f docs/404.html
 
       - name: Commit docs update
         run: |

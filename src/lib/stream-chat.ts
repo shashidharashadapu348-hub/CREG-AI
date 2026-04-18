@@ -1,7 +1,6 @@
 export type Msg = { role: "user" | "assistant"; content: string };
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
 const CHAT_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/chat` : "";
 
 export async function streamChat({
@@ -17,17 +16,16 @@ export async function streamChat({
   onDone: () => void;
   onError: (error: string) => void;
 }) {
-  if (!CHAT_URL || !SUPABASE_ANON_KEY) {
-    onError("Supabase configuration is missing. Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.");
+  if (!CHAT_URL) {
+    onError("Supabase configuration is missing. Add VITE_SUPABASE_URL.");
     return;
   }
 
+  // Use a simple CORS request (no custom headers) to avoid preflight failures on some edge gateways.
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "text/plain;charset=UTF-8",
     },
     body: JSON.stringify({ messages, language }),
   });

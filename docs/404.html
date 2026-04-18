@@ -16,5 +16,14 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        var isGitHubPages = window.location.hostname.indexOf("github.io") !== -1;
+        var isRepoRoot = window.location.pathname === "/CREG-AI/" || window.location.pathname === "/CREG-AI";
+        if (isGitHubPages && isRepoRoot) {
+          window.location.replace("/CREG-AI/docs/");
+        }
+      })();
+    </script>
   </body>
 </html>

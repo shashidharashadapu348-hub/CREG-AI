@@ -1,6 +1,28 @@
 export type Msg = { role: "user" | "assistant"; content: string };
 
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
+const SUPABASE_URL_FROM_ENV = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "";
+
+function decodeBase64Url(input: string): string {
+  const normalized = input.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  return atob(padded);
+}
+
+function getProjectRefFromAnonKey(token: string): string {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return "";
+    const payload = JSON.parse(decodeBase64Url(parts[1])) as { ref?: string };
+    return payload.ref || "";
+  } catch {
+    return "";
+  }
+}
+
+const SUPABASE_REF = SUPABASE_PROJECT_ID || getProjectRefFromAnonKey(SUPABASE_ANON_KEY);
+const SUPABASE_URL = SUPABASE_URL_FROM_ENV || (SUPABASE_REF ? `https://${SUPABASE_REF}.supabase.co` : "");
 const CHAT_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/chat` : "";
 
 export async function streamChat({
@@ -17,7 +39,7 @@ export async function streamChat({
   onError: (error: string) => void;
 }) {
   if (!CHAT_URL) {
-    onError("Supabase configuration is missing. Add VITE_SUPABASE_URL.");
+    onError("Supabase configuration is missing. Add VITE_SUPABASE_URL or VITE_SUPABASE_PROJECT_ID.");
     return;
   }
 

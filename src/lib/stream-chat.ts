@@ -1,6 +1,8 @@
 export type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
+const CHAT_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/chat` : "";
 
 export async function streamChat({
   messages,
@@ -15,11 +17,17 @@ export async function streamChat({
   onDone: () => void;
   onError: (error: string) => void;
 }) {
+  if (!CHAT_URL || !SUPABASE_ANON_KEY) {
+    onError("Supabase configuration is missing. Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.");
+    return;
+  }
+
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
     body: JSON.stringify({ messages, language }),
   });
@@ -32,8 +40,19 @@ export async function streamChat({
     onError("AI credits exhausted. Please add funds to continue.");
     return;
   }
-  if (!resp.ok || !resp.body) {
-    onError("Failed to connect to AI. Please try again.");
+  if (!resp.ok) {
+    let details = "";
+    try {
+      const payload = await resp.json();
+      details = payload?.error ? ` ${payload.error}` : "";
+    } catch {
+      // Ignore parse errors and fall back to status-based message.
+    }
+    onError(`Failed to connect to AI (${resp.status}).${details}`.trim());
+    return;
+  }
+  if (!resp.body) {
+    onError("AI response stream is unavailable in this browser session. Please refresh and try again.");
     return;
   }
 

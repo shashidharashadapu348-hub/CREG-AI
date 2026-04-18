@@ -1,8 +1,11 @@
 export type Msg = { role: "user" | "assistant"; content: string };
 
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
+const DEFAULT_SUPABASE_PROJECT_ID = "ywxrvsbcozlzwaopffhn";
+const DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3eHJ2c2Jjb3psendhb3BmZmhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTI0ODYsImV4cCI6MjA5MDM2ODQ4Nn0.j-fPE5XzwttwoeXHauM755Zok_WqqdJhXTepyROs8Is";
+
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || DEFAULT_SUPABASE_ANON_KEY;
 const SUPABASE_URL_FROM_ENV = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
-const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "";
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || DEFAULT_SUPABASE_PROJECT_ID;
 
 function decodeBase64Url(input: string): string {
   const normalized = input.replace(/-/g, "+").replace(/_/g, "/");

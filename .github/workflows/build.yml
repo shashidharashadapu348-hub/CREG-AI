@@ -1,0 +1,67 @@
+name: build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Show repository structure
+        run: |
+          echo "Repository contents:"
+          ls -la
+          echo ""
+          echo "Source tree:"
+          find . -type f -not -path './node_modules/*' -not -path './.git/*' -not -path './dist/*' | head -100
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Backend Dependencies
+        run: |
+          if [ -d "supabase/functions" ]; then
+            echo "Supabase edge functions detected (Deno runtime — no install required)."
+          else
+            echo "No backend directory found — skipping."
+          fi
+
+      - name: Run Backend Tests
+        run: |
+          if [ -d "supabase/functions" ]; then
+            echo "Edge functions present. Skipping runtime tests in CI (deployed via Lovable Cloud)."
+          else
+            echo "No backend tests to run."
+          fi
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Run Frontend Tests
+        run: npm test --if-present
+
+      - name: Build React App
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7

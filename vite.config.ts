@@ -15,6 +15,28 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) {
+            return undefined;
+          }
+
+          if (id.includes("react-syntax-highlighter")) return "syntax-highlighter";
+          if (id.includes("react-markdown") || id.includes("remark-gfm")) return "markdown";
+          if (id.includes("recharts")) return "recharts";
+          if (id.includes("@radix-ui")) return "radix";
+          if (id.includes("@tanstack/react-query")) return "query";
+          if (id.includes("react-router-dom")) return "router";
+          if (id.includes("lucide-react")) return "icons";
+          if (id.includes("react-dom") || id.includes("react/jsx-runtime") || id.includes("react")) return "react";
+
+          return "vendor";
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

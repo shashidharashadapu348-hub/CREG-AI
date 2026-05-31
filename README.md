@@ -1,4 +1,6 @@
- # Creg AI — AI Coding Assistant
+# Creg AI — AI Coding Assistant
+
+![Vite Build](https://img.shields.io/badge/built%20with-Vite-yellow)
 
 Creg AI is a web-based AI pair programmer that helps developers generate, debug,
 refactor, and optimize code. The app provides an interactive chat interface,

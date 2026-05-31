@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Terminal, Code2, Zap, ArrowRight } from "lucide-react";
+import { Code2, Zap, ArrowRight } from "lucide-react";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -64,7 +64,7 @@ export default function Auth() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <Terminal className="h-5 w-5 text-primary-foreground" />
+              <img src="/logo.png" alt="Creg AI logo" className="h-6 w-6 object-contain" />
             </div>
             <span className="text-2xl font-bold text-foreground tracking-tight">Creg AI</span>
           </div>
@@ -110,7 +110,7 @@ export default function Auth() {
           <div className="text-center lg:text-left">
             <div className="lg:hidden flex items-center gap-3 justify-center mb-4">
               <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                <Terminal className="h-5 w-5 text-primary-foreground" />
+                <img src="/logo.png" alt="Creg AI logo" className="h-6 w-6 object-contain" />
               </div>
               <span className="text-2xl font-bold text-foreground tracking-tight">Creg AI</span>
             </div>

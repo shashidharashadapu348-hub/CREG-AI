@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creg AI — AI Coding Assistant</title>
+    <meta name="description" content="Creg AI is your AI pair programmer. Generate, debug, refactor, and optimize code in any programming language." />
+    <meta name="theme-color" content="#0f1419" />
+
+    <meta property="og:title" content="Creg AI — AI Coding Assistant" />
+    <meta property="og:description" content="Generate production-ready code in any language with AI" />
+    <meta property="og:type" content="website" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=/CREG-AI/docs/" />
+      <p>
+        JavaScript is required for this app. If you are not redirected,
+        <a href="/CREG-AI/docs/">open the deployed app</a>.
+      </p>
+    </noscript>
+    <script>
+      (function () {
+        var isGitHubPages = window.location.hostname.indexOf("github.io") !== -1;
+        var isRepoRoot = window.location.pathname === "/CREG-AI/" || window.location.pathname === "/CREG-AI";
+        if (isGitHubPages && isRepoRoot) {
+          window.location.replace("/CREG-AI/docs/");
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

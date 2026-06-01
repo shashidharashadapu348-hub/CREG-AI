@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  preview: {
+    allowedHosts: ["creg-ai.onrender.com"],
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   build: {
     rollupOptions: {

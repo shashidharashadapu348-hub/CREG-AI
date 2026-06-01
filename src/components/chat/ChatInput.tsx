@@ -52,7 +52,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="border-t border-border bg-background p-4">
+    <div className="border-t border-border bg-background p-3 md:p-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
       {files.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {files.map((file, i) => (
@@ -65,7 +65,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           ))}
         </div>
       )}
-      <div className="flex items-end gap-2">
+      <div className="flex items-end gap-2 sm:gap-2.5">
         <input
           ref={fileRef}
           type="file"
@@ -77,7 +77,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-10 w-10 shrink-0"
+          className="h-11 w-11 shrink-0 md:h-10 md:w-10"
           onClick={() => fileRef.current?.click()}
           disabled={disabled}
         >
@@ -89,12 +89,12 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={disabled || uploading}
-          className="min-h-[44px] max-h-[200px] resize-none border-0 bg-secondary focus-visible:ring-1 rounded-xl"
+          className="min-h-[52px] max-h-[180px] resize-none border-0 bg-secondary px-4 py-3 text-base md:text-sm focus-visible:ring-1 rounded-2xl"
           rows={1}
         />
         <Button
           size="icon"
-          className="h-10 w-10 shrink-0 rounded-xl"
+          className="h-11 w-11 shrink-0 rounded-2xl md:h-10 md:w-10"
           onClick={handleSubmit}
           disabled={disabled || uploading || (!input.trim() && files.length === 0)}
         >

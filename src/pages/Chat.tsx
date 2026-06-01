@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Terminal, Menu, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 interface LocalConversation {
   id: string;
@@ -17,6 +19,7 @@ interface LocalConversation {
 
 export default function Chat() {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [conversations, setConversations] = useState<LocalConversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -115,84 +118,93 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <div className="w-64 border-r border-border flex flex-col bg-card shrink-0">
-          <div className="p-3 border-b border-border">
-            <Button variant="outline" className="w-full justify-start gap-2" onClick={handleNewChat}>
-              <Plus className="h-4 w-4" />
-              New Chat
-            </Button>
-          </div>
-          <ScrollArea className="flex-1">
-            <div className="p-2 space-y-1">
-              {conversations.map(conv => (
-                <div
-                  key={conv.id}
-                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors ${
-                    activeConvId === conv.id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                  onClick={() => setActiveConvId(conv.id)}
-                >
-                  <span className="truncate flex-1">{conv.title}</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDeleteConversation(conv.id); }}
-                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+    <div className="flex h-dvh bg-background overflow-hidden">
+      <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+        {/* Sidebar */}
+        {sidebarOpen && (
+          <ResizablePanel
+            defaultSize={isMobile ? 42 : 24}
+            minSize={isMobile ? 30 : 18}
+            maxSize={isMobile ? 58 : 42}
+            order={1}
+            className="min-w-0 border-r border-border flex flex-col bg-card"
+          >
+            <div className="p-3 border-b border-border">
+              <Button variant="outline" className="w-full justify-start gap-2" onClick={handleNewChat}>
+                <Plus className="h-4 w-4" />
+                New Chat
+              </Button>
+            </div>
+            <ScrollArea className="flex-1">
+              <div className="p-2 space-y-1">
+                {conversations.map(conv => (
+                  <div
+                    key={conv.id}
+                    className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors ${
+                      activeConvId === conv.id
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                    onClick={() => setActiveConvId(conv.id)}
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
-      )}
-
-      {/* Main area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex items-center gap-3 px-4 h-14 border-b border-border shrink-0">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Menu className="h-4 w-4" />
-          </Button>
-          <LanguageSelector value={language} onChange={setLanguage} />
-        </div>
-
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full gap-6 px-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Terminal className="h-8 w-8 text-primary" />
+                    <span className="truncate flex-1">{conv.title}</span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteConversation(conv.id); }}
+                      className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
               </div>
-              <div className="text-center max-w-md">
-                <h2 className="text-xl font-bold text-foreground mb-2">What are you building?</h2>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Describe any coding problem, paste code, or upload a file. I'll generate clean, production-ready code in any language.
-                </p>
-                <QuickPrompts onSelect={handleQuickPrompt} />
-              </div>
-            </div>
-          ) : (
-            <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
-              {messages.map((msg, i) => (
-                <ChatMessage key={i} role={msg.role} content={msg.content} />
-              ))}
-              {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-sm">Thinking...</span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            </ScrollArea>
+          </ResizablePanel>
+        )}
+        {sidebarOpen && <ResizableHandle withHandle className="bg-border/80 hover:bg-primary/50 transition-colors" />}
 
-        <div className="max-w-3xl mx-auto w-full">
-          <ChatInput onSend={handleSend} disabled={isStreaming} />
-        </div>
-      </div>
+        {/* Main area */}
+        <ResizablePanel defaultSize={isMobile ? 68 : 76} minSize={58} order={2} className="flex min-w-0 flex-col">
+          <div className="flex items-center gap-3 px-4 h-14 border-b border-border shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSidebarOpen(!sidebarOpen)}>
+              <Menu className="h-4 w-4" />
+            </Button>
+            <LanguageSelector value={language} onChange={setLanguage} />
+          </div>
+
+          <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-full gap-6 px-4 py-8">
+                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Terminal className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-center max-w-md">
+                  <h2 className="text-xl font-bold text-foreground mb-2">What are you building?</h2>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Describe any coding problem, paste code, or upload a file. I'll generate clean, production-ready code in any language.
+                  </p>
+                  <QuickPrompts onSelect={handleQuickPrompt} />
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
+                {messages.map((msg, i) => (
+                  <ChatMessage key={i} role={msg.role} content={msg.content} />
+                ))}
+                {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-sm">Thinking...</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="max-w-3xl mx-auto w-full pb-[env(safe-area-inset-bottom)]">
+            <ChatInput onSend={handleSend} disabled={isStreaming} />
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

@@ -121,12 +121,4 @@ Add a `LICENSE` file with your preferred license.
 - Maintainer: shashidharashadapu348@gmail.com
 - Repository: https://github.com/shashidharashadapu348-hub/CREG-AI
 
----
 
-If you want, I can also:
-
-- Add or update a `LICENSE` file.
-- Add setup instructions for Supabase and Lovable integrations.
-- Generate badges (build/test/coverage) for the top of this `README`.
-
-TODO: Document your project here

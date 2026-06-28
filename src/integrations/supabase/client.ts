@@ -2,8 +2,13 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://example.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "public-anon-key-placeholder";
+const DEFAULT_SUPABASE_URL = "https://ywxrvsbcozlzwaopffhn.supabase.co";
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3eHJ2c2Jjb3psendhb3BmZmhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTI0ODYsImV4cCI6MjA5MDM2ODQ4Nn0.j-fPE5XzwttwoeXHauM755Zok_WqqdJhXTepyROs8Is";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
 if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
   // Keep app renderable in environments where secrets are not configured yet.

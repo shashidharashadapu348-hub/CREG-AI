@@ -83,21 +83,16 @@ export default function Chat() {
       });
     };
 
-    try {
-      await streamChat({
-        messages: updatedMessages,
-        language: language !== "auto" ? language : undefined,
-        onDelta: upsertAssistant,
-        onDone: () => setIsStreaming(false),
-        onError: (error) => {
-          setIsStreaming(false);
-          toast({ title: "AI Error", description: error, variant: "destructive" });
-        },
-      });
-    } catch {
-      setIsStreaming(false);
-      toast({ title: "Error", description: "Connection failed", variant: "destructive" });
-    }
+    await streamChat({
+      messages: updatedMessages,
+      language: language !== "auto" ? language : undefined,
+      onDelta: upsertAssistant,
+      onDone: () => setIsStreaming(false),
+      onError: (error) => {
+        setIsStreaming(false);
+        toast({ title: "AI Error", description: error, variant: "destructive" });
+      },
+    });
   };
 
   const handleNewChat = () => {
